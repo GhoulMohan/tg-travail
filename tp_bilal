@@ -1,0 +1,316 @@
+# coding: utf-8
+
+# # TP algorithme de parcours des arbres binaires
+# 
+# ## Travail préparatoire
+# 
+# 1. Télécharger depuis github dans votre dossier personnel les fichiers `TP_algorithme_de_parcours_des_arbres_binaires.ipynb` et `visualisation_arbre.py` (module nécessaire pour le TP)
+# 
+# 2. Toutes les réponses à apporter au TP devront être faites dans le fichier `TP_algorithme_de_parcours_des_arbres_binaires.ipynb` et il devra être redéposé dans votre github.
+# 
+# Dans ce TP, on utilisera la classe `Arbre` ci-dessous. On choisit de représenter un arbre vide par `None`
+
+# In[5]:
+
+
+class Arbre:
+    def __init__(self, valeur, gauche, droit):
+        self.valeur = valeur
+        self.gauche = gauche
+        self.droit = droit
+    
+    def get_data(self):
+        return self.valeur
+    
+    def get_SAG(self):
+        return self.gauche
+    
+    def get_SAD(self):
+        return self.droit
+
+def est_vide(arbre):
+    return arbre is None
+
+
+# ## Partie 1 : implémentation de la classe `arbre`
+# 
+# 1. Préciser le type des **paramètres** `valeur`, `gauche` et `droit` dans le constructeur de la classe `Arbre`
+
+# * type de `valeur` : integer
+# * type de `gauche` : str
+# * type de `droit` : str
+
+# 2. Parmi les fonctions `get_data`, `get_SAG`, `get_SAD` et `est_vide`, préciser celles qui sont des **méthodes** de la classe `Arbre`. 
+
+# Ecrire la réponse ici
+
+# > On rappelle que la syntaxe pour un appel de fonction diffère de la syntaxe pour un appel de méthode.
+# 
+# 3. Préciser le résultat (et son type) renvoyé par chacune des fonctions `get_data`, `get_SAG`, `get_SAD` et `est_vide`
+
+# * `get_data` 
+#     * résultat : noed racine
+#     * type du résultat : integer
+# * `get_SAG` 
+#     * résultat : sous_arbre_gauche
+#     * type du résultat : objet
+# * `get_SAD` 
+#     * résultat : sous_arbre_droit
+#     * type du résultat : objet
+
+# 4. Ecrire le code binaire permettant de générer l'arbre `r` ci-dessous
+# 
+# ![click droit pour afficher l'image](img/arbre1.png)
+
+# In[8]:
+
+
+m = Arbre("m", None, None)
+j = Arbre("j", m, None)
+i = Arbre("i", None, None)
+d = Arbre("d", i, j)
+h = Arbre("h", None, None)
+c = Arbre("c", None, h)
+a = Arbre("a", c, d)
+k = Arbre("k", None, None)
+e = Arbre("e", k, None)
+f = Arbre("f", None, None)
+b = Arbre("b", e, f)
+r = Arbre("r", a, b)
+    
+
+
+# 5. Vérifier que l'arbre a été correctement construit à la question précédente en exécutant le code de la cellule ci-dessous
+
+# In[9]:
+
+
+from visualisation_arbre import *
+
+show_tree(r)
+
+
+# ## Partie 2 : parcours en profondeur
+# 
+# On rappelle les algorithmes des trois parcours en profondeur (vus en cours)
+# 
+# * Algorithme de parcours préfixe
+# 
+# ```
+# parcours_prefixe(arbre) :
+#     1. Visiter(racine)
+#     
+#     2. Si le sous-arbre gauche est non vide :
+#             parcours_prefixe(sous-arbre gauche) #Appel récursif
+#             
+#     3. Si le sous-arbre droit est non vide :
+#             parcours_prefixe(sous-arbre droit) #Appel récursif
+# ```
+# 
+# * Algorithme de parcours infixe
+# 
+# ```
+# parcours_infixe(arbre) :
+#     1. Si le sous-arbre gauche est non vide :
+#             parcours_infixe(sous-arbre gauche) #Appel récursif
+#             
+#     2. Visiter(racine)
+#     
+#     3. Si le sous-arbre droit est non vide :
+#             parcours_infixe(sous-arbre droit) #Appel récursif
+# ```
+# 
+# * Algorithme de parcours suffixe
+# 
+# ```
+# parcours_suffixe(arbre) :
+#     1. Si le sous-arbre gauche est non vide :
+#             parcours_suffixe(sous-arbre gauche) #Appel récursif
+#             
+#     2. Si le sous-arbre droit est non vide :
+#             parcours_suffixe(sous-arbre droit) #Appel récursif
+#             
+#     3. Visiter(racine)
+# ```
+# 
+# > Pour faire la question suivante, on rappelle que la fonction `print` peut prendre un paramètre `end`. Donner une valeur à `end` (différente de `"\n"`) permet d'afficher une suite de valeurs sans passer à la ligne. Un exemple est donné dans les deux cellules suivantes :
+
+# In[1]:
+
+
+# Par défaut print renvoie automatiquement à la ligne
+
+print(1)
+print(2)
+print(3)
+
+
+# In[2]:
+
+
+# On affiche les valeurs sur la même ligne en les séparant par ", "
+
+print(1, end = ", ")
+print(2, end = ", ")
+print(3)
+
+
+# 1. A partir de ces trois algorithmes écrits en pseudo-code, écrire trois **fonctions** python `parcours_prefixe`, `parcours_infixe` et `parcours_suffixe` permettant d'**afficher** :
+# 
+# * Pour un arbre non vide : la suite de valeur des noeuds sous la forme suivante `valeur1, valeur2, valeur3, ...` 
+# * Pour un arbre vide : la chaîne de caractère `"arbre vide"`
+# 
+# **Attention :** Pour cela on utilisera l'**interface** proposée par les fonctions `get_data`, `get_SAG`, `get_SAD` et `est_vide` : Il est donc **interdit de manipuler directement les attributs `valeur`, `gauche` et `droit`** dans le code des fonctions
+
+# In[103]:
+
+
+def parcour_prefixe(arbre):
+    if arbre is None:
+        return "arbre vide"
+    else:
+        print(arbre.get_data(), end = ",")
+        parcour_prefixe(arbre.get_SAG())
+        parcour_prefixe(arbre.get_SAD())
+        
+print("parcour_prefixe: ")
+parcour_prefixe(r)
+        
+def parcour_infixe(arbre):
+    if arbre is None:
+        return "arbre vide"
+    else:
+        parcour_infixe(arbre.get_SAG())
+        print(arbre.get_data(), end = ",")
+        parcour_infixe(arbre.get_SAD())
+        
+print("")
+print("parcour_infixe: ")
+parcour_infixe(r)
+
+def parcour_sufixe(arbre):
+    if arbre is None:
+        return "arbre vide"
+    else:
+        parcour_infixe(arbre.get_SAG())
+        parcour_infixe(arbre.get_SAD())
+        print(arbre.get_data(), end = ",")
+
+print("")
+print("parcour_infixe: ")
+parcour_sufixe(r)        
+        
+        
+
+
+# 2. Appeler chacune des trois fonctions sur l'arbre `r` et sur un arbre vide pour vérifier leur bon fonctionnement
+
+# In[10]:
+
+
+parcour_prefixe(r)
+parcour_prefixe(None)
+
+parcour_infixe(r)
+parcour_infixe(None)
+
+parcour_sufixe(r)
+parcour_sufixe(None)
+
+
+# 3. Refaire les deux questions précédentes mais en définissant trois **méthodes** de la classe `Arbre` plutôt que trois fonctions. **Attention :** 
+#     * Il faut regénérer l'arbre `r` (en réexécutant la cellule où il est construit) pour prendre en compte les modifications
+#     * Il n'est pas demandé d'appeler les méthodes sur l'arbre vide (sinon, vous aurez nécessairement une erreur !)
+
+# 4. Expliquer pourquoi on ne peut pas appliquer sur l'arbre vide les méthodes `parcours_prefixe`, `parcours_infixe` et `parcours_suffixe`
+
+# Ecrire la réponse ici
+
+# ## Partie 3 : parcours en largeur
+# 
+# On rappelle l'algorithme du parcours en largeur (vu en cours)
+# 
+# ```
+# 1. Créer une file
+# 2. Enfiler l'arbre
+# 3. Tant que la file est non vide :
+#        3a. Défiler pour récupérer l'arbre en tête de file
+#        3b. visiter la racine de l'abre
+#        3c. si le sous-arbre gauche de cet arbre n'est pas vide :
+#               On enfile son sous-arbre gauche
+#        3d. si le sous-arbre droit de cet arbre n'est pas vide :
+#               On enfile son sous-arbre droit
+# ```
+# 
+# > Cet algorithme a besoin d'une file. On va donc commencer par créer une classe `File` possédant les méthodes `est_vide`, `enfile` et `defile`. (Inutile de créer d'autres méthodes car seules ces trois là sont nécessaire dans l'algorithme de parcours en largeur).
+# 
+# 1. On se propose d'implémenter `File` avec une liste python `content` pour stocker les données. Les données seront **enfilées en fin de liste** et **défilées par la tête de liste**. Compléter la classe `File` ci-dessous
+
+# In[102]:
+
+
+class File:
+    def __init__(self):
+        ''' construit une file vide'''
+        self.content = []
+    
+    def est_vide(self):
+        return len(self.content) == 0
+    
+    def enfile(self, valeur):
+        self.content.append(valeur)
+    
+    def defile(self):
+        '''Défile et renvoie la valeur en tête de file'''
+        self.content.pop(0)
+
+
+# 2. Ecrire quelques lignes de code manipulant une file afin de vérifier son bon fonctionnement.
+
+# In[106]:
+
+
+p = File()
+p.enfile(2)
+p.enfile(8)
+p.est_vide() #False
+p.defile()
+p.defile()
+p.est_vide() #True
+
+
+# 3. A partir  l'algorithme du parcours en largeur écrit en pseudo-code, écrire une **fonction** python `parcours_largeur` permettant d'**afficher** :
+# 
+# * Pour un arbre non vide : la suite de valeur des noeuds sous la forme suivante `valeur1, valeur2, valeur3, ...` 
+# * Pour un arbre vide : la chaîne de caractère `"arbre vide"`
+# 
+# **Attention :** Pour cela on utilisera l'**interface** proposée par les classes `Arbre` et `File` : Il est donc **interdit de manipuler directement les attributs** dans le code des fonctions
+
+# In[ ]:
+
+
+def parcour_largeur(arbre):
+    f = File()
+    
+     
+
+
+# 4. Appeler la fonction `parcours_largeur` sur l'arbre `r` et sur un arbre vide pour vérifier leur bon fonctionnement
+
+# In[ ]:
+
+
+# Ecrire le code python ici
+
+
+# 5. Dans l'algorithme précédent, on effectue les modifications suivantes :
+# 
+# * on remplace la file par une pile
+# * Dans la boucle `while`, on traite d'abord le sous-arbre droit avant le sous-arbre gauche
+# 
+# Effectuer ci-dessous les manipulations sous python pour découvrir quel parcours est effectué par cet algorithme modifié.
+
+# In[ ]:
+
+
+# Ecrire le code python ici
